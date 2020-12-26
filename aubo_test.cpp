@@ -51,46 +51,6 @@ double zero_poeition[ARM_DOF] = {0};
 double initial_poeition[ARM_DOF] = {0};
 double postion1[ARM_DOF] = {0.0/180.0*M_PI,  0.0/180.0*M_PI,  90.0/180.0*M_PI, 0.0/180.0*M_PI, 90.0/180.0*M_PI,   0.0/180.0*M_PI};
 double position2[ARM_DOF] = {0};
-void testMoveJ(AuboDriver &robot_driver)
-{
-
-
-    /** Set Max joint acc and vel***/
-    aubo_robot_namespace::JointVelcAccParam jointMaxAcc;
-    aubo_robot_namespace::JointVelcAccParam jointMaxVelc;
-    for(int i = 0; i < ARM_DOF; i++)
-    {
-        jointMaxAcc.jointPara[i] = MAX_JOINT_ACC;
-        jointMaxVelc.jointPara[i] = MAX_JOINT_VEL;
-    }
-    robot_driver.robot_send_service_.robotServiceSetGlobalMoveJointMaxAcc(jointMaxAcc);
-    robot_driver.robot_send_service_.robotServiceSetGlobalMoveJointMaxVelc(jointMaxVelc);
-
-    /** Robot move to zero position **/
-    int ret = robot_driver.robot_send_service_.robotServiceJointMove(zero_poeition, true);
-    if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
-        ROS_ERROR("Failed to move to zero postions, error code:%d", ret);
-
-
-        /** switch to postion1 by moveJ **/
-        robot_driver.robot_send_service_.robotServiceJointMove(postion1, true);
-        if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
-        {
-            ROS_ERROR("Failed to move to zero postion, error code:%d", ret);
-            break;
-        }
-
-        /** switch to postion1 by moveJ **/
-        robot_driver.robot_send_service_.robotServiceJointMove(postion2, true);
-        if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
-        {
-            ROS_ERROR("Failed to move to  postion1, error code:%d", ret);
-            break;
-        }
-    
-}
-
-
 
 int main(int argc, char **argv)
 {
@@ -114,7 +74,8 @@ int main(int argc, char **argv)
                                              result); /*initialize*/
   if(ret)
   {
-    testMoveJ(robot_driver);
+    robot_driver.robot_send_service_.robotServiceJointMove(postion1, true);
+    robot_driver.robot_send_service_.robotServiceJointMove(postion2, true);
     
   }
   else
